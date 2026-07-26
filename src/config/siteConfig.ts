@@ -6,13 +6,13 @@ const SITE_LANG = "zh_CN";
 
 export const siteConfig: SiteConfig = {
 	// 站点标题
-	title: "Xingjiu",
+	title: "云深不知屋",
 
 	// 站点副标题
-	subtitle: "Xingjiu",
+	subtitle: "只是一个博客",
 
 	// 站点 URL
-	site_url: "https://firefly.cuteleaf.cn",
+	site_url: "https://blog.figgeer.com/",
 
 	// 站点描述
 	description:
@@ -214,7 +214,7 @@ export const siteConfig: SiteConfig = {
 		// Bilibili 配置
 		bilibili: {
 			// 你的 Bilibili 用户 UID
-			uid: "38932988",
+			uid: "475961749",
 		},
 		// TMDB 配置（可选，需要翻墙）
 		// tmdb: {
