@@ -15,8 +15,7 @@ export const siteConfig: SiteConfig = {
 	site_url: "https://blog.figgeer.com/",
 
 	// 站点描述
-	description:
-		"这是我的第一个博客",
+	description: "这是我的第一个博客",
 
 	// 站点关键词
 	keywords: [
