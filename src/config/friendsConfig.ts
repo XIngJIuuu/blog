@@ -51,14 +51,14 @@ export const friendsConfig: FriendLink[] = [
 		enabled: true,
 	},
 	{
-	title: "March",
-    imgurl: "https://cdn.jsdelivr.net/gh/March030303/Picgo@main/img/3.jpg",
-    desc: "保持临在，感受当下",
-    siteurl: "https://blog.march03.com",
-    tags: ["Blog"],
-	weight: 19,
-	enabled: true,
-	}
+		title: "March",
+		imgurl: "https://cdn.jsdelivr.net/gh/March030303/Picgo@main/img/3.jpg",
+		desc: "保持临在，感受当下",
+		siteurl: "https://blog.march03.com",
+		tags: ["Blog"],
+		weight: 19,
+		enabled: true,
+	},
 ];
 
 // 获取启用的友链并进行排序
