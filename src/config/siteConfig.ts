@@ -9,13 +9,13 @@ export const siteConfig: SiteConfig = {
 	title: "云深不知屋",
 
 	// 站点副标题
-	subtitle: "只是一个博客",
+	subtitle: "",
 
 	// 站点 URL
 	site_url: "https://blog.figgeer.com/",
 
 	// 站点描述
-	description: "这是我的第一个博客",
+	description: "只是一个博客",
 
 	// 站点关键词
 	keywords: [
