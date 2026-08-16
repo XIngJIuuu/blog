@@ -230,6 +230,10 @@ dsh plugin --profile web remove <package-name>
 - [Pilot 浏览器驾驶舱](https://github.com/guo6x/dsh-pilot)：零依赖 CDP 浏览器操控（8 个 `pilot_*` 工具 + 可拖拽驾驶舱面板）；
 - [Built-in Capability Inspector](https://github.com/Starfie1d1272/dsh-builtin-toggles)：内置能力检查器，可 fail-closed 关闭 9 个内置 UI 能力；
 - [Superpowers for DSH](https://github.com/LayneChai/superpowers-dsh)：把 obra/superpowers 的 TDD、调试、规划等技能适配到 DSH；
+- [Agent Teams](https://github.com/Nanmicoder/dsh-agent-teams)：Agent 团队编排插件；
+- [dsh-plugin-cc](https://github.com/cpj-dev/dsh-plugin-cc)：桥接 Claude Code 的插件；
+- [dsh-doctor](https://github.com/coppynight/dsh-doctor)：flutter-doctor 风格的环境诊断修复插件；
+- [dsh-naiwa-theme](https://github.com/DevourerM/dsh-naiwa-theme)：奶蛙主题皮肤；
 - [dsh-feishu](https://www.npmjs.com/package/@dsh-feishu/dsh-feishu)、[@sugarforever/dsh-mcp-apps](https://www.npmjs.com/package/@sugarforever/dsh-mcp-apps)：飞书接入、MCP 应用集合；
 - [DeepSeek Harness Desktop](https://github.com/anywhere-labs/deepseek-harness-desktop)：桌面端外壳。
 
@@ -697,6 +701,8 @@ allowBuilds:
 5. **敏感信息**：密码/Token 不要写进 `cordis.yml` 或插件配置（有 credentials 领域和 secret 角色字段专门管理）；SSH 插件等把密码明文存在 `~/.dsh/dsh-ssh.json`（0600 权限），注意保护。
 6. **升级谨慎**：DSH 处于 preview，插件与 SDK 版本需匹配（如 `@deepseek-ai/*` 核心 SDK 包与插件包的 `peerDependencies`）；pnpm 11 的 `minimumReleaseAge` 门禁可能静默装回旧版插件，必要时在 `pnpm-workspace.yaml` 里 `minimumReleaseAgeExclude` 排除插件 scope。
 
+> 社区也在做安全侧的配套：有第三方审计报告（GitHub Discussions #454）、PoC 合集（[zzszmyf/dsh-security-pocs](https://github.com/zzszmyf/dsh-security-pocs)）、以及 dsh-plugin-audit 这类插件"安检门"工具。装任何第三方插件前，花一分钟看它的 `build`/`prepare` 脚本和 star/维护情况，是成本最低的防线。
+
 ---
 
 ## 参考与延伸阅读
@@ -707,6 +713,7 @@ allowBuilds:
 - 插件市场与索引：[dsh-plugin-hub](https://github.com/Noob-stupid/dsh-plugin-hub) · [whalehub-dsh](https://github.com/vvlife/whalehub-dsh) · [deepseek-plugin-store](https://github.com/Ericwong5021/deepseek-plugin-store) · [dshfind](https://dshfind.com) · [dsh-community-plugins](https://github.com/HubaKing/dsh-community-plugins)
 - 精选清单：[awesome-deepseek-harness](https://github.com/0xsline/awesome-deepseek-harness)
 - 深度手册：[dsh-handbook](https://github.com/Electricitysheep/dsh-handbook)
+- 入门教程：[runoob 安装教程](https://www.runoob.com/deepseek-harness/deepseek-harness-install.html) · [runoob 发布插件教程](https://www.runoob.com/deepseek-harness/deepseek-harness-publish.html)（npm / GitHub / tarball 三种分发）
 - 社区教程：《[DeepSeek Harness 一切皆插件：开源Agent框架强在哪，怎么装](https://developer.aliyun.com/article/1755970)》（阿里云开发者社区）· [DeepSeek Harness: Everything-is-a-Plugin Developer Preview](https://www.sitepoint.com/deepseek-harness-developer-preview/)（SitePoint）
 
 ---
