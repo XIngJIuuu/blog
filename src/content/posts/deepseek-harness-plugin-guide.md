@@ -715,6 +715,7 @@ allowBuilds:
 - 深度手册：[dsh-handbook](https://github.com/Electricitysheep/dsh-handbook)
 - 入门教程：[runoob 安装教程](https://www.runoob.com/deepseek-harness/deepseek-harness-install.html) · [runoob 发布插件教程](https://www.runoob.com/deepseek-harness/deepseek-harness-publish.html)（npm / GitHub / tarball 三种分发）
 - 社区教程：《[DeepSeek Harness 一切皆插件：开源Agent框架强在哪，怎么装](https://developer.aliyun.com/article/1755970)》（阿里云开发者社区）· [DeepSeek Harness: Everything-is-a-Plugin Developer Preview](https://www.sitepoint.com/deepseek-harness-developer-preview/)（SitePoint）
+- 官方安全讨论：[#587 插件配置写权限与无签名校验](https://github.com/deepseek-ai/deepseek-harness/discussions/587) · [#454 第三方插件安全审计](https://github.com/deepseek-ai/deepseek-harness/discussions/454) · [#451 沙箱逃逸与本地 RPC](https://github.com/deepseek-ai/deepseek-harness/discussions/451) · [#250 Web 审批回环](https://github.com/deepseek-ai/deepseek-harness/discussions/250) · [PoC 合集 zzszmyf/dsh-security-pocs](https://github.com/zzszmyf/dsh-security-pocs)
 
 ---
 
