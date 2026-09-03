@@ -11,7 +11,6 @@ pinned: false
 
 > [!NOTE]
 > 这是第四天 HTML 学习笔记，重点进入 **HTML5** 阶段：语义化标签、新表单控件、音频视频，以及最常用的 DOM 操作。
-> 原始练习文件在 `E:\project\html\day4`。
 > 其中 `keygen` 等标签已经废弃，了解即可；`data-*` 自定义属性和 `querySelector` / `classList` / `dataset` 现在依然非常常用。
 
 ## 一、传统网页 vs HTML5 网页

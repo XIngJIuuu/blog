@@ -12,7 +12,6 @@ pinned: false
 > [!NOTE]
 > 这是第五天 HTML 学习笔记，做一个 **HTML5 自定义视频播放器**：
 > 用 `<video>` + 原生 JavaScript 控制播放/暂停、显示总时长、同步进度条、全屏。
-> 原始练习文件在 `E:\project\html\day5_A_player`。
 > 实际运行还需要 Font Awesome 图标库、`css/font-awesome.min.css`、`images/loading.gif`、`video/fun.mp4` 等素材，这里重点学习 HTML/CSS/JS 的完整思路。
 
 ## 完整代码
