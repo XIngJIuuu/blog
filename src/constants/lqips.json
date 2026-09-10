@@ -9,8 +9,6 @@
   "src:assets/images/DesktopWallpaper/d3.avif": "4268936f829e99adc7",
   "src:assets/images/DesktopWallpaper/d2.avif": "b49db67a7e91d0aabc",
   "src:assets/images/DesktopWallpaper/d1.avif": "8b9bb59ba6bae7d7dd",
-  "public:assets/images/sponsor/wechat.png": "d5d5d5dad9d7dbd8cf",
-  "public:assets/images/sponsor/alipay.png": "8ebbde91bedf93c0e0",
   "public:assets/images/ad/ad1.webp": "a1b8b68a8e918c8f93",
   "src:assets/images/touxiang.jpg": "9e93878e8d8ad1bcbc",
   "src:assets/images/MobileWallpaper/sakura-uniform.avif": "ad788cad8594875b48",
@@ -18,5 +16,7 @@
   "src:assets/images/MobileWallpaper/band-closeup.avif": "5a4a5a675e60a48982",
   "src:assets/images/DesktopWallpaper/q3.jpg": "99adc0acc5d698afbe",
   "src:assets/images/DesktopWallpaper/q2.jpg": "8c5e586248496f3933",
-  "src:assets/images/DesktopWallpaper/q1.jpg": "ae916de5af72df995e"
+  "src:assets/images/DesktopWallpaper/q1.jpg": "ae916de5af72df995e",
+  "public:assets/images/sponsor/wechat-qr.png": "9c9b9b9fa09fa2a4a2",
+  "public:assets/images/sponsor/alipay-qr.png": "9191919595959c9c9c"
 }
