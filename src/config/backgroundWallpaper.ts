@@ -22,7 +22,7 @@ export const backgroundWallpaper: BackgroundWallpaperConfig = {
 	 * desktop: "assets/images/DesktopWallpaper/d1.avif", // 单张图片
 	 *
 	 * mobile: "https://t.alcy.cc/mp", // 随机图API
-	 * mobile: "assets/images/MobileWallpaper/m1.avif", // 单张图片
+	 * mobile: "assets/images/MobileWallpaper/sakura-uniform.avif", // 单张图片
 	 *
 	 * 支持配置多张图片（数组），每次刷新页面随机显示一张：
 	 * desktop: [
@@ -31,8 +31,8 @@ export const backgroundWallpaper: BackgroundWallpaperConfig = {
 	 * ],
 	 *
 	 * mobile:[
-	 *   "assets/images/MobileWallpaper/m1.avif",
-	 *   "assets/images/MobileWallpaper/m2.avif",
+	 *   "assets/images/MobileWallpaper/sakura-uniform.avif",
+	 *   "assets/images/MobileWallpaper/pastel-street.avif",
 	 * ],
 	 */
 	src: {
@@ -43,14 +43,11 @@ export const backgroundWallpaper: BackgroundWallpaperConfig = {
 			"assets/images/DesktopWallpaper/q2.jpg",
 		],
 		// 移动背景图片（支持单张或多张随机）
-		// mobile: "assets/images/MobileWallpaper/m1.avif",
+		// mobile: "assets/images/MobileWallpaper/sakura-uniform.avif",
 		mobile: [
-			"assets/images/MobileWallpaper/m1.avif",
-			"assets/images/MobileWallpaper/m2.avif",
-			"assets/images/MobileWallpaper/m3.avif",
-			"assets/images/MobileWallpaper/m4.avif",
-			"assets/images/MobileWallpaper/m5.avif",
-			"assets/images/MobileWallpaper/m6.avif",
+			"assets/images/MobileWallpaper/sakura-uniform.avif",
+			"assets/images/MobileWallpaper/pastel-street.avif",
+			"assets/images/MobileWallpaper/band-closeup.avif",
 		],
 		// 背景视频播放地址
 		// 支持单个视频路径（字符串）或多个视频循环（数组）
