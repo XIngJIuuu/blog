@@ -1,6 +1,6 @@
 ---
 title: Python 学习笔记 Day 3：函数定义、参数体系与递归
-published: 2026-09-10
+published: 2026-09-9
 description: Python 第三天笔记：内置函数调用与类型转换、def 定义函数与参数检查、返回多个值、跨文件导入函数，位置/默认/可变/关键字/命名关键字五种参数与组合规则，递归与尾递归，以及一元二次方程、可变参数乘积、汉诺塔练习。
 tags: [Python, 学习笔记]
 category: Python学习
