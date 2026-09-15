@@ -1,7 +1,7 @@
 ---
 title: Python 学习笔记 Day 7：浅拷贝与深拷贝
 published: 2026-09-15
-description: Python 第七天笔记：浅拷贝只造新的外层壳、壳里仍是原对象的引用，用 id()/is 逐个探针证明 copy()/[:] / list() 三种写法等价、嵌套 dict 改内层会连带改到原表、deepcopy 靠 memo 保留共享结构且对不可变对象直接复用；配 LC1480 三版对照谁改了原对象，以及 sorted(key=) 与 .sort() 的区别。
+description: Python 第七天笔记：浅拷贝只造新的外层壳、壳里仍是原对象的引用，用 id()/is 逐个探针证明 copy()/[:] / list() 三种写法等价、嵌套 dict 改内层会连带改到原表、deepcopy 靠 memo 保留共享结构且对不可变对象直接复用；配 LC1480 三版对照谁改了原对象，以及 sorted(key=) 与 .sort() 的区别，关键步骤附 pythontutor 箭头图。
 tags: [Python, 学习笔记]
 category: Python学习
 slug: python-learning-day7
@@ -19,7 +19,7 @@ pinned: false
 > # 只有一层的列表/字典浅拷贝就够；嵌套容器必须 deepcopy。
 > ```
 >
-> 每个例子都是"先写注释猜输出 → 再运行验证"，对不上就直接把注释（有时是代码本身）改对，错误的结论不留在练习文件里。另外今天还顺手把廖雪峰 8.3 返回函数/闭包、8.4 装饰器预读完了，内容独立成篇，留到后面整理。
+> 每个例子都是"先写注释猜输出 → 再运行验证"，对不上就直接把注释（有时是代码本身）改对，错误的结论不留在练习文件里。今天 6 张箭头图是 `d2_pythontutor.py` 贴进 pythontutor 截的，看之前记着把语言选成 **Python 3.8+ (CPython)**——默认的 Skulpt 是 JS 重写的解释器，`deepcopy` 那几张会画错。另外今天还顺手把廖雪峰 8.3 返回函数/闭包、8.4 装饰器预读完了，内容独立成篇，留到后面整理。
 
 ## 一、先给结论：浅拷贝复制了什么
 
@@ -66,6 +66,10 @@ print(data)   # [[1, 2, 99], [3, 4]] ← 我明明拷了一份啊？
 ```
 
 `s1[0].append(99)` 动的不是 `s1` 那个外壳，而是外壳里第一格**指向的那个子列表**——而那个子列表和 `data[0]` 是同一个对象。
+
+pythontutor 停在 `s1[0].append(99)` 这一帧最清楚：`data` / `s1` / `s2` / `s3` 四根外层箭头各自指着四个不同的 list，而它们的内层箭头全挤在同一个 `[1, 2, 99]` 上——那个 99 四边都看得见：
+
+[![浅拷贝之后：四个外壳各自独立，内层箭头仍指向同一个 list](/posts/python-learning-day7/shallow-shared-inner.png)](/posts/python-learning-day7/shallow-shared-inner.png)
 
 ## 二、用 `id()` 把"浅"这个字钉死
 
@@ -139,6 +143,10 @@ dp   ──► dict#3 ─┬─ "users" ──► 列表#B ──► dict#Y   �
                  └─ "count" ──► 1        ← 不可变，直接复用同一个对象
 ```
 
+同一时刻 pythontutor 里真实长这样（三行赋值都执行完了）：`info` 和 `sh` 的 `"users"` 两根箭头指同一个 list，那个 list 里的 dict 已经是"被浅拷贝连带改掉了"；`sh` 的 `"count"` 那格单独换绑成 99，`info` 的仍是 1；`dp` 则连着一个全新的 list → dict：
+
+[![嵌套字典：info 与 sh 共享 users 列表，sh 的 count 已换绑，dp 内层全新](/posts/python-learning-day7/nested-dict-shallow-deep.png)](/posts/python-learning-day7/nested-dict-shallow-deep.png)
+
 **这就是 RAG / 数据处理里最常见的隐性 bug**：从缓存里取出检索结果 `list`，`copy.copy()` 一份出来加打分字段，结果缓存里那份也被改了——因为嵌套的那层 score 字典是共享的。规矩很简单：**结构里只要还有一层可变容器，就 `deepcopy`**。
 
 ## 五、`copy.copy()`、`.copy()`、`[:]` 是什么关系
@@ -184,6 +192,10 @@ print(copy.deepcopy(t) is t)            # False —— 新建了一个元组
 print(copy.deepcopy(t)[0] is t[0])      # False —— 里面那个列表也另造了一个
 ```
 
+截图里 `t` 和 `t2` 两根箭头落在同一个 tuple 上，`t3` 指向另一个 tuple，而且它俩的第 0 格连着两个**不同**的 `[1, 2]`：
+
+[![元组特例：copy.copy 原样返回，deepcopy 连元组带内层列表一起重建](/posts/python-learning-day7/tuple-copy-vs-deepcopy.png)](/posts/python-learning-day7/tuple-copy-vs-deepcopy.png)
+
 因为 `deepcopy` 的职责是"递归复制所有内容"，遇到装着可变对象的元组，它必须把内层列表复制掉才能保证独立，于是外壳（元组）只能顺手重建。如果元组里全是不可变对象，那它也没得复制，照样原样返回：
 
 ```python
@@ -221,6 +233,10 @@ def deepcopy(x, memo=None):
     # 元组/字典/集合/自定义对象同理（自定义可走 __deepcopy__ 或 __reduce_ex__）
 ```
 
+先确认它把深拷贝画成什么样：`deep = copy.deepcopy(data)` 之后 `deep` 的两根内层箭头指向的是**新建的两个子列表**，`deep[1].append(77)` 那个 77 只出现在 `deep` 那份里，`data` 完全看不到：
+
+[![深拷贝：deep 的外壳和内层全是新对象，77 只进了 deep](/posts/python-learning-day7/deepcopy-new-all.png)](/posts/python-learning-day7/deepcopy-new-all.png)
+
 ### 1. memo 的副作用：深拷贝复制的是"结构"，包括共享关系
 
 ```python
@@ -235,6 +251,10 @@ print(pc[0] is pc[1])          # True ← 副本内部仍然共享！
 print(shared)                  # [0]  ← 原对象一点没动
 ```
 
+箭头图上，`shared` 和 `pair` 那两根仍然挤在原来的 `[0]` 上（左边没被碰过），而 `pc` 的两个槽指向**同一个**新列表 `[0, 1]`：
+
+[![memo：pair 的两个槽共享同一个列表，deepcopy 之后 pc 的两个槽也共享同一个新列表](/posts/python-learning-day7/memo-shared-structure.png)](/posts/python-learning-day7/memo-shared-structure.png)
+
 原对象里"两处共用一个列表"这个**结构关系**，`deepcopy` 会原样搬到副本里：第一次复制 `shared` 时把它记进 memo，第二个槽再遇到同一个对象，直接取现成的副本。所以深拷贝保证的是"**副本内部**的共享关系与原对象一致"，而不是"把所有东西都造两遍"。少了 memo，遇到 `a.append(a)` 这种自引用结构就直接递归爆栈了。
 
 ### 2. 不可变对象不复制：`deepcopy` 对它们"不深"
@@ -244,6 +264,10 @@ n = 10 ** 18                 # 故意用一个大整数，绕开小整数缓存
 print(copy.deepcopy(n) is n)         # True
 print(copy.deepcopy("abc") == "abc") # True，且是同一个对象
 ```
+
+截图里 Objects 那一侧压根没多出第二个 int：`n` 和 `nc` 只是 Global frame 里两行字面值相同的记录，连箭头都没有——没有新对象被造出来：
+
+[![不可变对象：deepcopy 之后 nc 与 n 共用同一个 int，Objects 面板没有新对象](/posts/python-learning-day7/immutable-deepcopy-reuse.png)](/posts/python-learning-day7/immutable-deepcopy-reuse.png)
 
 `10 ** 18` 早就出了 `-5 ~ 256` 的缓存区间，`is` 仍然是 True——这就证明它不是 Day 6 那个缓存巧合，而是 `deepcopy` 的**原子对象快速路径**：不可变对象复制了也没人能用出差别，那就别复制。
 
