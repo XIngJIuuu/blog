@@ -1,7 +1,7 @@
 ---
 title: Python 学习笔记 Day 8：默认参数、闭包与装饰器
 published: 2026-09-16
-description: Python 第八天笔记，上下两半场把"名字绑定"这条线走完。上半场：默认值只在函数定义时求值一次（用 __defaults__ 和它的 id 直接打印证据）、None 哨兵为什么必须是 None、元组默认值"安全但没法用"、函数传参两条规则、`+=` 在 list 与 tuple 上行为相反的完整原因、`a[0] += [3]` 这个先改完再抛异常的坑，外加浮点数与 Decimal。下半场：函数作为返回值与闭包、循环里建函数的晚绑定坑及三种修法、nonlocal、装饰器与三层嵌套、functools.wraps 到底补回了什么、偏函数 partial。
+description: Python 第八天笔记，上下两半场把"名字绑定"这条线走完。上半场：默认值只在函数定义时求值一次（用 __defaults__ 和它的 id 直接打印证据）、None 哨兵为什么必须是 None、元组默认值"安全但没法用"、函数传参两条规则、`+=` 在 list 与 tuple 上行为相反的完整原因、`a[0] += [3]` 这个先改完再抛异常的坑，外加浮点数与 Decimal。下半场：函数作为返回值与闭包、循环里建函数的晚绑定坑及三种修法、nonlocal、装饰器与三层嵌套、functools.wraps 到底补回了什么、偏函数 partial。关键步骤附 pythontutor 箭头图。
 tags: [Python, 学习笔记]
 category: Python学习
 slug: python-learning-day8
@@ -14,7 +14,7 @@ pinned: false
 >
 > **上半场**把它用在**函数**上——默认参数、传参、`+=`，三个问题共用同一把钥匙；**下半场**把它用在**函数对象**上——返回函数、闭包、装饰器，也就是"函数也是对象"这句话真正开始产生红利的地方。
 >
-> 一条主线贯穿全天：**默认值、闭包里的自由变量、装饰器返回的 wrapper，全都是"某个名字一直绑着某个对象"这一件事的不同形态。** 每个例子都跑过，注释里的输出是实测值。
+> 一条主线贯穿全天：**默认值、闭包里的自由变量、装饰器返回的 wrapper，全都是"某个名字一直绑着某个对象"这一件事的不同形态。** 每个例子都跑过，注释里的输出是实测值。上半场那三个探针（`__defaults__`、`None` 哨兵、改对象 vs 换绑定）另配了 9 张 pythontutor 箭头图，截图时语言选的是 **Python 3.11 (CPython)**。
 
 ## 一、默认值在**定义时**求值一次
 
@@ -59,6 +59,18 @@ f (函数对象) ──► __defaults__ 元组 ──► 列表#1   ← 全进�
 每次调用不传 lst 时，形参 lst 就绑到它 ────
 ```
 
+同一个探针在 pythontutor 里停三个时刻，箭头是这么长的。第一次 `f(1)` 之后，函数对象下面挂着的 `default arguments: lst` 已经指向长成 `[1]` 的那个列表：
+
+[![第一次调用后：函数对象的 default arguments 里的 lst 已长成 [1]](/posts/python-learning-day8/defaults-after-first-call.png)](/posts/python-learning-day8/defaults-after-first-call.png)
+
+第二次 `f(2)` 进行中：栈帧里形参 `lst` 伸出的箭头，和函数对象身上 `default arguments` 里那格 `lst` 的箭头，**落在同一个 list 上**——这就是"不传实参时形参绑到它"的字面意思：
+
+[![第二次调用中：栈帧的形参 lst 与函数对象的默认参数 lst 指向同一个列表](/posts/python-learning-day8/defaults-during-second-call.png)](/posts/python-learning-day8/defaults-during-second-call.png)
+
+第二次调用返回后：列表变成 `[1, 2]`，而右上角 Print 面板里三次 `id()` 是一模一样的数——对象从头到尾只有一个：
+
+[![第二次调用后：列表长成 [1,2]，三次 id() 打印完全相同](/posts/python-learning-day8/defaults-after-second-call.png)](/posts/python-learning-day8/defaults-after-second-call.png)
+
 **默认值不是"调用时给的一个初值"，它是函数对象的一个属性的值**，跟着函数活一辈子。模块级函数活得和进程一样久，所以这个列表也就一样久。
 
 ### 2. 正确写法：`None` 哨兵
@@ -72,6 +84,14 @@ def good(item, lst=None):
 print(good(1), good(2))     # [1] [2]   ← 每次都是新列表
 ```
 
+换成 `None` 哨兵，图上就没有"共用"这回事了。`good(1)` 执行到 `return` 前，栈帧里 `lst` 指的是**这次调用新建的** `[1]`，而函数对象下面 `default arguments` 那一格始终是 `None`——它不指向任何列表，所以攒不了东西：
+
+[![good(1)：函数体里新建的列表只归这一次调用，默认参数那一格仍是 None](/posts/python-learning-day8/none-sentinel-first-call.png)](/posts/python-learning-day8/none-sentinel-first-call.png)
+
+紧接着 `good(2)` 又新建了一个**只有它自己**的 `[2]`，和上面那个 `[1]` 毫无关系：
+
+[![good(2)：第二次调用另起一个列表，两次互不干扰](/posts/python-learning-day8/none-sentinel-second-call.png)](/posts/python-learning-day8/none-sentinel-second-call.png)
+
 为什么哨兵**必须是 `None`**，不能是别的假值？因为要区分的是这两种调用：
 
 ```python
@@ -80,7 +100,15 @@ good(1, caller)     # 调用者显式传了一个空列表，希望结果累积�
 good(2)             # 调用者什么都没传，希望函数自己新建一个
 ```
 
-这两种情况传进来时都"看起来像空"。只有 `None` 能一刀切开——**它是单例**，`lst is None` 一次身份比较就能精确判定"到底有没有传"，而且 `None` 永远不可能被误当成一个真列表。这正是 Day 6 那条"判断 None 永远用 `is`"在真实设计里的用法。
+`good(1, caller)` 这一步的箭头和上面两张不一样了：全局帧的 `caller` 和栈帧里的形参 `lst` **两根箭头指同一个列表**，函数没有新建东西：
+
+[![显式传入时：caller 与形参 lst 指向同一个列表](/posts/python-learning-day8/none-sentinel-explicit-caller.png)](/posts/python-learning-day8/none-sentinel-explicit-caller.png)
+
+`good(2, caller)` 之后还是这同一个对象长成了 `[1, 2]`，`caller` 立刻看得见——这正是"调用者想累积"的语义：
+
+[![第二次传入同一个 caller：两根箭头仍指向同一个列表，内容已是 [1,2]](/posts/python-learning-day8/none-sentinel-caller-grown.png)](/posts/python-learning-day8/none-sentinel-caller-grown.png)
+
+"没传"和"传了个空列表"这两种情况，`[]` 当默认值时图上根本分不出来。只有 `None` 能一刀切开——**它是单例**，`lst is None` 一次身份比较就能精确判定"到底有没有传"，而且 `None` 永远不可能被误当成一个真列表。这正是 Day 6 那条"判断 None 永远用 `is`"在真实设计里的用法。
 
 > [!TIP]
 > 反过来看：如果哨兵写成 `lst=[]`，它和"默认值"就是同一个东西了，函数一打开就掉回第一节的坑。**哨兵的价值恰恰在于它一定不是一个可用的容器。**
@@ -124,10 +152,18 @@ p1 = [1, 2]; f1(p1); print(p1)    # [1, 2, 9]  ← 改到外面了
 p2 = [1, 2]; f2(p2); print(p2)    # [1, 2]     ← 没改到
 ```
 
+`f2(p2)` 执行中这张图把两条规则同时摆出来了：`f1` 那次是 `p1` 的箭头所指**那个对象自己**长出了 9；而 `f2` 的栈帧里，形参 `nums` 伸向的是一个**新建的** `[1, 2, 1]`，`p2` 的箭头还停在原来那个 `[1, 2]` 上：
+
+[![f2 执行中：形参 nums 指向新建的列表，全局 p2 仍指向原列表](/posts/python-learning-day8/param-rebind-new-list.png)](/posts/python-learning-day8/param-rebind-new-list.png)
+
 | 函数体里的写法 | 动的是 | 调用者看得见吗 |
 |---|---|---|
 | `nums.append(x)` / `nums[0] = x` / `nums.clear()` | **对象内容** | ✅ 看得见（`nums` 和外面那个名字是同一个对象） |
 | `nums = ...` / `nums = nums + [x]` | **局部名字的绑定** | ❌ 看不见（栈帧一销毁，这个局部名字就没了） |
+
+程序跑完之后再看同一张图，`f2` 那个栈帧已经被销毁，`[1, 2, 1]` 那个列表**再没有任何名字指向它**（图上只剩 `p1 → [1,2,9]`、`p2 → [1,2]` 两组箭头），它当场就成了垃圾：
+
+[![运行结束：f2 的栈帧消失，那次新建的列表已无人引用](/posts/python-learning-day8/param-rebind-after-return.png)](/posts/python-learning-day8/param-rebind-after-return.png)
 
 判断只问一句：**这次操作换的是"名字→对象"的绑定，还是对象自己的内容？**
 
