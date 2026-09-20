@@ -459,6 +459,26 @@ def target():
 
 `target.__name__` 仍然是 `'target'`——因为两个装饰器都套了 `wraps`，属性被一层层原样传了出来。少任何一层 `wraps`，这个名字在最外层就变成 `wrapper`。
 
+### 逐帧看这四步
+
+下面四张是同一份代码在 pythontutor 上走到的四个位置。左边代码区的箭头是当前执行位置，右上 Print output 是已经打印出来的内容，右下 Frames 是当前存在的调用帧。
+
+**第一帧：装饰器还没开始跑。** 全局帧里只有 `functools`、`a`、`b` 三个名字，`target` 这个函数还没被定义出来，Print output 是空的。
+
+[![第一帧：全局帧只有 a、b，target 尚未定义](/posts/python-learning-day10/stack-def-stage-before-decorators.png)](/posts/python-learning-day10/stack-def-stage-before-decorators.png)
+
+**第二帧：里层 `b(target)` 先执行完。** Print output 只有 `b() 在定义阶段执行了` 这一行——离 `@a` 更近的 `b` 先被调用。此时多出一个 `f1: b` 帧，它的 `func` 指向原始的 `target()`，`wrapper` 指向 `b` 里新建的那个函数对象。
+
+[![第二帧：f1: b 帧，func 指向原始 target](/posts/python-learning-day10/stack-inner-decorator-runs-first.png)](/posts/python-learning-day10/stack-inner-decorator-runs-first.png)
+
+**第三帧：两层都包完了。** 全局帧里终于出现 `target`，它的箭头指向 `target(*args, **kwargs) [parent=f2]`，也就是 `a` 那一帧里新建的 wrapper。右侧同时挂着**两个同名**的函数对象，一个 `[parent=f1]`、一个 `[parent=f2]`，名字都叫 `target`，但是两个不同的对象——全局名字只绑住了外面那一个。
+
+[![第三帧：两个同名 wrapper 对象共存，全局 target 指向外层](/posts/python-learning-day10/stack-two-wrappers-one-name.png)](/posts/python-learning-day10/stack-two-wrappers-one-name.png)
+
+**第四帧：调用时先碰到外层。** Print output 走到第四行 `→ 先进入 a 的 wrapper`，而 `→ 先进入 b 的 wrapper` 还没出现，函数体那行也没出现。全局 `target` 绑的是 `a` 的 wrapper，所以第一个被调用的必然是它；`b` 的 wrapper 要等 `a` 的 wrapper 在 `return func(*args, **kwargs)` 里把控制权传下去。
+
+[![第四帧：打印到先进入 a 的 wrapper](/posts/python-learning-day10/stack-call-enters-outer-wrapper.png)](/posts/python-learning-day10/stack-call-enters-outer-wrapper.png)
+
 ## 十三、计时该用哪个时钟
 
 ```python
