@@ -120,6 +120,31 @@ f3()
 
 这条最容易误会的地方是：`@tracer(2)` 底下那三行 `print` 看着像「写了就会打印」，其实**最外层和中间层整个程序生命周期里只各跑一次**，内层才是每次调用都跑。第一次见到会以为脚本坏了。
 
+### 逐帧看这四步
+
+上面那份 `tracer` 在 pythontutor 上走到的四个位置。左侧红色箭头是即将执行的一行，绿色是刚执行完的一行；右上 Print output 是已经打印出来的内容，右下 Frames 是当前存在的调用帧。
+
+**Step 3：调用刚发生，函数体一行都还没跑。** 左侧绿箭头停在 `@tracer(2)`、红箭头停在第 1 行。右边已经多出一个 `tracer` 帧，里面 `times` 是 **2**；而 Objects 区那个函数对象下面写着 `default arguments: times 3`，3 被高亮出来。实参盖掉默认值，就发生在这一帧里——**默认值只是「没给实参时兜底的 3」，一旦给了 2，闭包里存的就是 2**。
+
+[![Step 3：tracer 帧里 times 是 2，默认值 3 只是兜底](/posts/python-learning-day11/tracer-step3-outer-being-called.png)](/posts/python-learning-day11/tracer-step3-outer-being-called.png)
+
+**Step 6：`deco` 这个函数对象刚被造出来。** Print output 已经有「最外层执行了」这一行；绿箭头停在 `def deco(func):`（说明这个 `def` 执行完了），红箭头停在 `return deco`。右侧 `f1: tracer` 帧里除了 `times 2`，多了 `deco` 指向 `function deco(func) [parent=f1]`——**那个 `[parent=f1]` 就是闭包**：这个 `deco` 自带一个指回 `f1` 的环境，将来它读 `times` 就从那儿读。
+
+[![Step 6：deco 对象建好，标签带着 parent=f1 的闭包](/posts/python-learning-day11/tracer-step6-deco-object-built.png)](/posts/python-learning-day11/tracer-step6-deco-object-built.png)
+
+**Step 9：最外层已经返回了，但它的帧没消失。** 绿箭头停在 `def f3():`，也就是被装饰的函数还在定义中；Print output 仍然只有「最外层执行了」一行。关键在右侧：`f1: tracer` 整帧**变灰了**（不再是当前帧），可它还在，`times 2` 和 `deco` 都还好端端待在里面。
+
+这就是第一节那句「参数存在闭包里」的字面意思：**外层函数执行完了，只要还有内层对象指着它，这一帧就得一直活着**，一直活到每次调用 `wrapper` 去读 `times` 为止。
+
+[![Step 9：f1 tracer 帧变灰但依然存在](/posts/python-learning-day11/tracer-step9-outer-frame-greyed-but-alive.png)](/posts/python-learning-day11/tracer-step9-outer-frame-greyed-but-alive.png)
+
+**Step 11：中间层被调用的瞬间。** 新出现一个帧 `deco [parent=f1]`，里面的 `func` 指向 `function f3()`——**三层里第二层收的就是这个箭头**。红箭头停在第 5 行那句 `print`，所以 Print output 里「中间层执行了」还**没**打出来，下一行才打。
+
+[![Step 11：deco 帧里的 func 指向 f3](/posts/python-learning-day11/tracer-step11-deco-receives-f3.png)](/posts/python-learning-day11/tracer-step11-deco-receives-f3.png)
+
+> [!NOTE]
+> 这四帧只覆盖到**定义阶段**，也就是「最外层跑完、中间层刚开始」。内层 `wrapper` 要等到第 21 行 `f3()` 才第一次执行，图里没截——那部分上面的实测输出已经给全了。
+
 ## 四、少写一对括号：定义时不炸，调用时才炸
 
 `@retry(3)` 写成 `@retry`，是这类装饰器最典型的错。完整时间线：
