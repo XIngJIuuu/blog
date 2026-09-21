@@ -40,5 +40,13 @@
   "public:posts/python-learning-day8/none-sentinel-caller-grown.png": "f9f9f9fafafaf9f9f8",
   "public:posts/python-learning-day8/defaults-during-second-call.png": "fbfbfbfbfbfafbfcfc",
   "public:posts/python-learning-day8/defaults-after-second-call.png": "fafafbf8f8f8fafafa",
-  "public:posts/python-learning-day8/defaults-after-first-call.png": "fbfbfbfafafafbfcfb"
+  "public:posts/python-learning-day8/defaults-after-first-call.png": "fbfbfbfafafafbfcfb",
+  "public:posts/python-learning-day11/tracer-step9-outer-frame-greyed-but-alive.png": "f9f9f9f9f9f9fefffe",
+  "public:posts/python-learning-day11/tracer-step6-deco-object-built.png": "f8f8f8f9f9f9fefefe",
+  "public:posts/python-learning-day11/tracer-step3-outer-being-called.png": "f9f9f9fafafafefefe",
+  "public:posts/python-learning-day11/tracer-step11-deco-receives-f3.png": "f9f8f8fafafafdfefe",
+  "public:posts/python-learning-day10/stack-two-wrappers-one-name.png": "fafafafafafafcfdfe",
+  "public:posts/python-learning-day10/stack-inner-decorator-runs-first.png": "fafafafafafbfefeff",
+  "public:posts/python-learning-day10/stack-def-stage-before-decorators.png": "fafafafafafbfefefe",
+  "public:posts/python-learning-day10/stack-call-enters-outer-wrapper.png": "fafafafafafafbfcfc"
 }
